@@ -145,7 +145,6 @@ def evaluate(checkpoint_name, checkpoint_index, config, index_type,
 
     ex) python run.py evaluate CHECKPOINT_NAME CHEKPOINT_INDEX -i ivfpq -t 3000 --nogpu
 
-
     • Currently, the 'evaluate' command does not reference any information other
     than the output log directory from the config file.
     """
