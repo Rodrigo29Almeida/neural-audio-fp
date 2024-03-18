@@ -1,9 +1,9 @@
 # Dataset directories
 DIR:
-    SOURCE_ROOT_DIR : '../neural-audio-fp-dataset/music/'
-    BG_ROOT_DIR : '../neural-audio-fp-dataset/aug/bg/'
-    IR_ROOT_DIR : '../neural-audio-fp-dataset/aug/ir/'
-    SPEECH_ROOT_DIR : '../neural-audio-fp-dataset/aug/speech/common_voice_8k/en/'
+    SOURCE_ROOT_DIR : '/mnt/dataset/public/Fingerprinting/neural-audio-fp-dataset/music/'
+    BG_ROOT_DIR : '/mnt/dataset/public/Fingerprinting/neural-audio-fp-dataset/aug/bg/'
+    IR_ROOT_DIR : '/mnt/dataset/public/Fingerprinting/neural-audio-fp-dataset/aug/ir/'
+    SPEECH_ROOT_DIR : '/mnt/dataset/public/Fingerprinting/neural-audio-fp-dataset/aug/speech/common_voice_8k/en/'
                 # Speech augmentation was not included in the ICASSP results.
     OUTPUT_ROOT_DIR : './logs/emb/'
                 # Root directory where the generated embeddings (uncompressed
