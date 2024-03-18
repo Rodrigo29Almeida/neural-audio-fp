@@ -54,12 +54,12 @@ MODEL:
 
 # Batch-size
 BSZ:
-    TR_BATCH_SZ : 120 #
+    TR_BATCH_SZ : 32 #
         # Training batch size N must be EVEN number.
-    TR_N_ANCHOR : 60 # Usually N/2; N/5 for Triplet-loss. 
-    VAL_BATCH_SZ : 120 # Must be EVEN number.
-    VAL_N_ANCHOR : 60 # Usually N_val/2 
-    TS_BATCH_SZ : 125
+    TR_N_ANCHOR : 16 # Usually N/2; N/5 for Triplet-loss. 
+    VAL_BATCH_SZ : 32 # Must be EVEN number.
+    VAL_N_ANCHOR : 16 # Usually N_val/2 
+    TS_BATCH_SZ : 32
 
 # Training parameters
 TRAIN:
