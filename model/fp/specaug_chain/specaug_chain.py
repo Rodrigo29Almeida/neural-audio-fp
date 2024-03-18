@@ -91,6 +91,7 @@ class SpecAugChainer(tf.keras.layers.Layer):
                  n_holes=1,
                  hole_fill='min',
                  hole_config=[None,None,None,None],
+                 aug_bypass = False,
                  **kwargs):
         super(SpecAugChainer, self).__init__()
         
@@ -106,7 +107,7 @@ class SpecAugChainer(tf.keras.layers.Layer):
         else:
             self.n_holes = 'DISABLED (only interacts with cutout)'
             self.hole_config = 'DISABLED (only interacts with cutout)'
-        self.bypass = False
+        self.bypass = aug_bypass
 
         # Create a chain
         self.chain = tf.keras.Sequential()
@@ -187,7 +188,8 @@ def get_specaug_chain_layer(cfg, trainable=False):
     m = SpecAugChainer(chain_config=cfg['SPEC_AUG']['SPECAUG_CHAIN'],
                        probs=cfg['SPEC_AUG']['SPECAUG_PROBS'],
                        n_holes=cfg['SPEC_AUG']['SPECAUG_N_HOLES'],
-                       hole_fill=cfg['SPEC_AUG']['SPECAUG_HOLE_FILL'])
+                       hole_fill=cfg['SPEC_AUG']['SPECAUG_HOLE_FILL'],
+                       aug_bypass=cfg['SPEC_AUG']['AUG_BYPASS'])
     m.trainable = trainable
     return m
     
