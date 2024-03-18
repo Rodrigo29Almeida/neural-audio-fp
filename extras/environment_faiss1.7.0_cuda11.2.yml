@@ -1,4 +1,4 @@
-name: fp
+name: fpfaiss
 channels:
   - conda-forge
   - defaults
@@ -151,4 +151,4 @@ dependencies:
     - typing-extensions==3.7.4.3
     - werkzeug==2.0.1
     - wrapt==1.12.1
-prefix: /home/$USER/anaconda3/envs/fp
+prefix: /home/$USER/anaconda3/envs/fpfaiss
