@@ -102,6 +102,7 @@ SPEC_AUG:
     SPECAUG_PROBS : 1.
     SPECAUG_N_HOLES : 1
     SPECAUG_HOLE_FILL : 'zeros' # one of {'min', 'zeros', 'random', [min_mag, max_mag]}
+    AUG_BYPASS : True
 
 # Device setup
 DEVICE:
