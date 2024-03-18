@@ -23,7 +23,7 @@ from model.utils.dataloader_keras import genUnbalSequence
 SNR_RANGE = (10, 10) # fix 0 dB; (0, 10) for random dB in range.
 AUG_CHANGE_INTERVAL = 1 # change augmentation method every N secconds.
 USE_SPEECH_AUG = False
-SOURCE_DIR = 'val-query-db-500-30s/db' #'test-query-db-500-30s/db' 
+SOURCE_DIR = '/mnt/dataset/public/Fingerprinting/neural-audio-fp-dataset/music/val-query-db-500-30s/db' #'test-query-db-500-30s/db' 
 OUTPUT_ROOT_DIR = '../aug_output/val_10dB'
 
 
