@@ -212,12 +212,13 @@ class FingerPrinter(tf.keras.Model):
             front_hidden_ch[-1] = ((front_hidden_ch[-1]//emb_sz) + 1) * emb_sz                
         
         # Front (sep-)conv layers
+        #x = tf.zeros((1,)+ input_shape, dtype=tf.float32)
+        #print(f"ConvLayer entrada: {self.front_conv(x).shape}")
         for i in range(self.n_clayers):
             self.front_conv.add(ConvLayer(hidden_ch=front_hidden_ch[i],
                 strides=front_strides[i], norm=norm))
+            #print(f"ConvLayer {i+1}: {self.front_conv(x).shape}")
         self.front_conv.add(tf.keras.layers.Flatten()) # (B,F',T',C) >> (B,D)
-        print("\n\n\n\n aqui\n\n\n\\n")
-        print(f"self.front_conv:{self.front_conv}")
             
         # Divide & Encoder layer
         self.div_enc = DivEncLayer(q=emb_sz, unit_dim=fc_unit_dim, norm=norm)
