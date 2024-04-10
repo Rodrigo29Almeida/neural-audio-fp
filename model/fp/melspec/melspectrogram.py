@@ -120,7 +120,7 @@ def get_melspec_layer(cfg, trainable=False):
     n_mels = cfg['MODEL']['N_MELS']
     f_min = cfg['MODEL']['F_MIN']
     f_max = cfg['MODEL']['F_MAX']
-    if cfg['MODEL']['FEAT'] == 'melspec':
+    if 'melspec' == 'melspec':
         segment_norm = False
     elif cfg['MODEL']['FEAT'] == 'melspec_maxnorm':
         segment_norm = True

@@ -5,6 +5,7 @@
 """ dataset.py """
 import glob
 from model.utils.dataloader_keras import genUnbalSequence
+import csv
 
 
 class Dataset:
@@ -200,6 +201,14 @@ class Dataset:
                 self.datasel_test_db)]
         else:
             raise NotImplementedError(self.datasel_test_dummy_db)
+        
+        """csv-Rodrigo"""
+        csvNameFile = 'generateFilesCSV.csv'
+        with open(csvNameFile, mode='w', newline='') as arquivo_csv_file:
+            escritor_csv_file = csv.writer(arquivo_csv_file)
+            for line in self.ts_dummy_db_source_fps:
+                escritor_csv_file.writerow(line)
+        """csv"""
 
         _ts_n_anchor = self.ts_batch_sz
         ds = genUnbalSequence(
@@ -212,6 +221,14 @@ class Dataset:
             shuffle=False,
             random_offset_anchor=False,
             drop_the_last_non_full_batch=False) # No augmentations...
+        
+        """csv-Rodrigo"""
+        csvName = 'generateCSV.csv'
+        with open(csvName, mode='w', newline='') as arquivo_csv:
+            escritor_csv = csv.writer(arquivo_csv)
+            for linha in ds:
+                escritor_csv.writerow(linha)
+        """csv"""
         return ds
 
 

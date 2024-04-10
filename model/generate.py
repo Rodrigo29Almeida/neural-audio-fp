@@ -190,5 +190,5 @@ def generate_fingerprint(cfg,
     if 'custom_source' in ds.keys():
         pass;
     elif sz_check['db'] != sz_check['query']:
-        print("\033[93mWarning: 'db' and 'qeury' size does not match. This can cause a problem in evaluataion stage.\033[0m")
+        print("\033[93mWarning: 'db' and 'query' size does not match. This can cause a problem in evaluataion stage.\033[0m")
     return

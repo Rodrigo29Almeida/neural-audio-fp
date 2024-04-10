@@ -16,7 +16,7 @@ DIR:
 DATA_SEL:
     TRAIN : '10k_icassp'
                 # '10k_icassp' for ICASSP results. No other options now.
-    TEST_DUMMY_DB : '10k_full'
+    TEST_DUMMY_DB : '100k_full_icassp' #'10k_full'
                 # '10k_full' or '100k_full_icassp'. This scales your search
                 # experiment. Dataset_mini users can only use '10k_full' mode.
                 # It's actually '10k_30s' though.
@@ -54,12 +54,12 @@ MODEL:
 
 # Batch-size
 BSZ:
-    TR_BATCH_SZ : 32 #
+    TR_BATCH_SZ : 120 #
         # Training batch size N must be EVEN number.
-    TR_N_ANCHOR : 16 # Usually N/2; N/5 for Triplet-loss. 
-    VAL_BATCH_SZ : 32 # Must be EVEN number.
-    VAL_N_ANCHOR : 16 # Usually N_val/2 
-    TS_BATCH_SZ : 32
+    TR_N_ANCHOR : 60 # Usually N/2; N/5 for Triplet-loss. 
+    VAL_BATCH_SZ : 120 # Must be EVEN number.
+    VAL_N_ANCHOR : 60 # Usually N_val/2 
+    TS_BATCH_SZ : 125
 
 # Training parameters
 TRAIN:
