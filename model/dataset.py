@@ -203,12 +203,13 @@ class Dataset:
             raise NotImplementedError(self.datasel_test_dummy_db)
         
         """#csv-Rodrigo
-        csvNameFile = 'generateFilesCSV.csv'
-        with open(csvNameFile, mode='w', newline='') as arquivo_csv_file:
-            escritor_csv_file = csv.writer(arquivo_csv_file)
-            for line in self.ts_dummy_db_source_fps:
-                escritor_csv_file.writerow(line)
-        #csv"""
+        csvName = 'generate-100k_full_icassp-dummy.csv'
+        with open(csvName, mode='w', newline='') as arquivo_csv:
+            for linha in self.ts_dummy_db_source_fps:
+                # Escrever a linha diretamente no arquivo sem formatação
+                arquivo_csv.write(''.join(linha) + '\n')
+        """
+        
 
         _ts_n_anchor = self.ts_batch_sz
         ds = genUnbalSequence(
@@ -257,6 +258,20 @@ class Dataset:
             self.ts_db_icassp_fps = sorted(
                 glob.glob(self.source_root_dir + 'test-query-db-500-30s/' +
                       'db/**/*.wav', recursive=True))
+            
+            """#csv-Rodrigo
+            csvName = 'generate_unseen_icassp_query.csv'
+            with open(csvName, mode='w', newline='') as arquivo_csv:
+                for linha in self.ts_query_icassp_fps:
+                # Escrever a linha diretamente no arquivo sem formatação
+                    arquivo_csv.write(''.join(linha) + '\n')
+            #csv-2
+            csvName2 = 'generate_unseen_icassp_db.csv'
+            with open(csvName2, mode='w', newline='') as arquivo_csv2:
+                for linha2 in self.ts_db_icassp_fps:
+                # Escrever a linha diretamente no arquivo sem formatação
+                    arquivo_csv2.write(''.join(linha2) + '\n')
+            #csv"""
 
             _ts_n_anchor = self.ts_batch_sz
             ds_query = genUnbalSequence(
