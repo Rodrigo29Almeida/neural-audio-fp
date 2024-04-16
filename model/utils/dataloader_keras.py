@@ -180,7 +180,11 @@ class genUnbalSequence(Sequence):
             self.experimental_mode_offset_sec_list = (
                 (np.arange(self.n_pos_per_anchor) -
                  (self.n_pos_per_anchor - 1) / 2) /
+<<<<<<< HEAD
                 self.n_pos_per_anchor) * self.hopc
+=======
+                self.n_pos_per_anchor) * self.hop
+>>>>>>> cc27424f09cae6d1eaf2d13c8c0b09270b5c86e3
 
 
     def __len__(self):

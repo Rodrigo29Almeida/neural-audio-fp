@@ -5,7 +5,10 @@
 """ dataset.py """
 import glob
 from model.utils.dataloader_keras import genUnbalSequence
+<<<<<<< HEAD
 import csv
+=======
+>>>>>>> cc27424f09cae6d1eaf2d13c8c0b09270b5c86e3
 
 
 class Dataset:
@@ -201,6 +204,7 @@ class Dataset:
                 self.datasel_test_db)]
         else:
             raise NotImplementedError(self.datasel_test_dummy_db)
+<<<<<<< HEAD
         
         """#csv-Rodrigo
         csvName = 'generate-100k_full_icassp-dummy.csv'
@@ -210,6 +214,8 @@ class Dataset:
                 arquivo_csv.write(''.join(linha) + '\n')
         """
         
+=======
+>>>>>>> cc27424f09cae6d1eaf2d13c8c0b09270b5c86e3
 
         _ts_n_anchor = self.ts_batch_sz
         ds = genUnbalSequence(
@@ -222,6 +228,7 @@ class Dataset:
             shuffle=False,
             random_offset_anchor=False,
             drop_the_last_non_full_batch=False) # No augmentations...
+<<<<<<< HEAD
         
         """#csv-Rodrigo
         csvName = 'generateCSV.csv'
@@ -230,6 +237,8 @@ class Dataset:
             for linha in ds:
                 escritor_csv.writerow(linha)
         #csv"""
+=======
+>>>>>>> cc27424f09cae6d1eaf2d13c8c0b09270b5c86e3
         return ds
 
 
@@ -258,6 +267,7 @@ class Dataset:
             self.ts_db_icassp_fps = sorted(
                 glob.glob(self.source_root_dir + 'test-query-db-500-30s/' +
                       'db/**/*.wav', recursive=True))
+<<<<<<< HEAD
             
             """#csv-Rodrigo
             csvName = 'generate_unseen_icassp_query.csv'
@@ -272,6 +282,8 @@ class Dataset:
                 # Escrever a linha diretamente no arquivo sem formatação
                     arquivo_csv2.write(''.join(linha2) + '\n')
             #csv"""
+=======
+>>>>>>> cc27424f09cae6d1eaf2d13c8c0b09270b5c86e3
 
             _ts_n_anchor = self.ts_batch_sz
             ds_query = genUnbalSequence(

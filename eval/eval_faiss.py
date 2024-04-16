@@ -23,7 +23,11 @@ def load_memmap_data(source_dir,
     """
     Load data and datashape from the file path.
 
+<<<<<<< HEAD
     • Get shape from [source_dir/.npy}.
+=======
+    • Get shape from [source_dir/fname_shape.npy}.
+>>>>>>> cc27424f09cae6d1eaf2d13c8c0b09270b5c86e3
     • Load memmap data from [source_dir/fname.mm].
 
     Parameters
