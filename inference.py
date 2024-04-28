@@ -19,6 +19,20 @@ from model.fp.nnfp import get_fingerprinter
 
 from librosa.util import frame
 
+os.environ['CUDA_VISIBLE_DEVICES'] = '0'
+
+gpus = tf.config.list_physical_devices('GPU')
+if gpus:
+  # Restrict TensorFlow to only use the first GPU
+  try:
+    tf.config.set_visible_devices(gpus[0], 'GPU')
+    logical_gpus = tf.config.list_logical_devices('GPU')
+    print(len(gpus), "Physical GPUs,", len(logical_gpus), "Logical GPU")
+  except RuntimeError as e:
+    # Visible devices must be set before GPUs have been initialized
+    print(e)
+
+
 
 def build_fp(cfg):
     """ Build fingerprinter """
@@ -56,7 +70,7 @@ def predict(X, m_fp):
     """
     emb_gf = m_fp(X)
 
-    return emb_gf  
+    return emb_gf
 
 
 def load_model():
@@ -91,25 +105,27 @@ def run(filepath, dstpath, m_fp):
         frames = signal[:fs][None,:] #(1, 8000)
 
 
-    frames = frames[..., np.newaxis] #(B,8000,1) -- Adicionar mais uma dimensão aos dados 
+    #frames = frames[..., np.newaxis] #(B,8000,1) -- Adicionar mais uma dimensão aos dados 
     
-    X = frames[np.newaxis, ...]  #(1,B,8000,1)  
+    X = frames[np.newaxis, np.newaxis, ...]  #(1,B,8000,1)  
     X = tf.convert_to_tensor(X, dtype=tf.float32)  # (1,B,8000,1)
-    X = tf.transpose(X, perm=[1, 0, 3, 2]) # (B,1,1,8000)
+    X = tf.transpose(X, perm=[2, 0, 1, 3]) # (B,1,1,8000)
     
     emb = predict(X, m_fp)
 
+    tf.config.run_functions_eagerly(True)
+
     print(f"Saving features to: {dstpath}")
     with open(dstpath, "wb") as f:
-        pickle.dump(emb, f)
+        pickle.dump(emb.numpy(), f)
     
     
 if __name__ == "__main__":
         
-    #files_dummy_db_dir = '/mnt/dataset/public/Fingerprinting/neural-audio-fp-dataset/music/test-dummy-db-100k-full/fma_full'
-    files_dummy_db_dir = '/mnt/dataset/teste'
+    files_dummy_db_dir = '/mnt/dataset/public/Fingerprinting/neural-audio-fp-dataset/music/test-dummy-db-100k-full/fma_full'
+    #files_dummy_db_dir = '/mnt/dataset/test/audio'
     files_query_dir = '/mnt/dataset/public/Fingerprinting/neural-audio-fp-dataset/music/test-query-db-500-30s'
-    root_out = '/mnt/dataset/features'
+    root_out = '/mnt/dataset/public/Fingerprinting/features'
     
     files = glob.glob(os.path.join(files_dummy_db_dir, "**/*.wav")) + glob.glob(os.path.join(files_query_dir, "**/*.wav"))
 
@@ -124,10 +140,11 @@ if __name__ == "__main__":
         for src in files:
             
             parts = src.split("/")
+            subdir= parts[-3]
             set_id = parts[-2]
             track = parts[-1].split(".")[0]
 
-            out_path = os.path.join(root_out, set_id)
+            out_path = os.path.join(root_out, subdir, set_id)
             os.makedirs(out_path, exist_ok=True)
 
             dst = os.path.join(out_path, track + ".pkl")
@@ -142,12 +159,12 @@ if __name__ == "__main__":
     else:
         
         for src in files:
-            
             parts = src.split("/")
+            subdir= parts[-3]
             set_id = parts[-2]
             track = parts[-1].split(".")[0]
 
-            out_path = os.path.join(root_out, set_id)
+            out_path = os.path.join(root_out, subdir, set_id)
             os.makedirs(out_path, exist_ok=True)
 
             dst = os.path.join(out_path, track + ".pkl")
