@@ -29,6 +29,8 @@ def build_fp(cfg):
 
     # m_fp: fingerprinter g(f(.)).
     m_fp = get_fingerprinter(cfg, trainable=False)
+    m_fp.trainable = False
+    
     return m_pre, m_specaug, m_fp
 
 
@@ -50,16 +52,14 @@ def predict(X, m_fp):
     Test step used for mini-search-validation 
     X -> (B,1,8000)
     """
-    m_fp.trainable = False
     emb_gf = m_fp(X)
 
-    return emb_gf    # f(.), L2(f(.)), L2(g(f(.))
+    return emb_gf  
 
 
 def load_model():
 
-    checkpoint_name_dir:str = "./logs/CHECKPOINT_BSZ_120"#"CHECKPOINT"   # string
-    checkpoint_index:int = None  # int
+    checkpoint_name_dir:str = "./logs/CHECKPOINT_BSZ_120"  #"CHECKPOINT"   # string
     config:str = "default"   
 
     cfg = load_config(config)
@@ -72,9 +72,9 @@ def load_model():
     return m_fp
     
 
-def run(src, dst, m_fp):
+def run(filepath, dstpath, m_fp):
     
-    signal,fs = librosa.load(src, mono=True, sr=8000)
+    signal, fs = librosa.load(filepath, mono=True, sr=8000)
 
     win_sz = fs
     hop_sz = int(fs/2)
@@ -83,21 +83,21 @@ def run(src, dst, m_fp):
         signal = librosa.util.pad_center(signal, size=win_sz, mode='constant')
         
     if len(signal) > 1.5*win_sz:
-        frames = librosa.frame(signal, frame_length=win_sz, hop_length=hop_sz).T  
+        frames = np.transpose(librosa.frame(signal, frame_length=win_sz, 
+                                            hop_length=hop_sz))  # (B, 8000)
     else:
-        frames = signal[:fs][None,:]
+        frames = signal[:fs][None,:] #(1, 8000)
     
-    X = frames[np.newaxis,...]
-    X = tf.convert_to_tensor(frames[np.newaxis,...], dtype=tf.float32)  # (1,B,8000)
-    X = tf.transpose(X, perm = [1, 0, 2]) # (B,1,8000)
+    X = frames[np.newaxis, ...]  #(1,B,8000)
+    X = tf.convert_to_tensor(X, dtype=tf.float32)  # (1,B,8000)
+    X = tf.transpose(X, perm=[1, 0, 2]) # (B,1,8000)
     
     emb = predict(X, m_fp)
 
-    with open(dst,"wb") as f:
+    with open(dstpath, "wb") as f:
         pickle(emb, f)
     
     
-
 if __name__ == "__main__":
         
     files_dummy_db_dir = '/mnt/dataset/public/Fingerprinting/neural-audio-fp-dataset/music/test-dummy-db-100k-full/fma_full'
@@ -107,7 +107,7 @@ if __name__ == "__main__":
     files = glob.glob(os.path.join(files_dummy_db_dir, "**/*.wav")) + glob.glob(os.path.join(files_query_dir, "**/*.wav"))
 
     parallel=True
-    m_fp = load_model()
+    model_fp = load_model()
 
     if parallel:
 
@@ -126,7 +126,7 @@ if __name__ == "__main__":
             
             if not os.path.exists(dst):
                 print(dst)
-                pool.apply_async(run, (src, dst, m_fp))
+                pool.apply_async(run, (src, dst, model_fp))
 
         pool.close()
         pool.join()
@@ -146,5 +146,5 @@ if __name__ == "__main__":
 
             if not os.path.exists(dst):
                 print(dst)
-                run(src, dst, m_fp)
+                run(src, dst, model_fp)
 
