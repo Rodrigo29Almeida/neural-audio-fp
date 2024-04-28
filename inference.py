@@ -17,6 +17,8 @@ from model.fp.melspec.melspectrogram import get_melspec_layer
 from model.fp.specaug_chain.specaug_chain import get_specaug_chain_layer
 from model.fp.nnfp import get_fingerprinter
 
+from librosa.util import frame
+
 
 def build_fp(cfg):
     """ Build fingerprinter """
@@ -73,7 +75,7 @@ def load_model():
     
 
 def run(filepath, dstpath, m_fp):
-    
+    print(f"file entrada: {filepath}")
     signal, fs = librosa.load(filepath, mono=True, sr=8000)
 
     win_sz = fs
@@ -83,35 +85,41 @@ def run(filepath, dstpath, m_fp):
         signal = librosa.util.pad_center(signal, size=win_sz, mode='constant')
         
     if len(signal) > 1.5*win_sz:
-        frames = np.transpose(librosa.frame(signal, frame_length=win_sz, 
-                                            hop_length=hop_sz))  # (B, 8000)
+        frames = np.transpose(librosa.util.frame(signal, frame_length=win_sz, 
+                                            hop_length=hop_sz))  # (B, 8000) # alterei de librosa.frame para librosa.util.frame
     else:
         frames = signal[:fs][None,:] #(1, 8000)
+
+
+    frames = frames[..., np.newaxis] #(B,8000,1) -- Adicionar mais uma dimensão aos dados 
     
-    X = frames[np.newaxis, ...]  #(1,B,8000)
-    X = tf.convert_to_tensor(X, dtype=tf.float32)  # (1,B,8000)
-    X = tf.transpose(X, perm=[1, 0, 2]) # (B,1,8000)
+    X = frames[np.newaxis, ...]  #(1,B,8000,1)  
+    X = tf.convert_to_tensor(X, dtype=tf.float32)  # (1,B,8000,1)
+    X = tf.transpose(X, perm=[1, 0, 3, 2]) # (B,1,1,8000)
     
     emb = predict(X, m_fp)
 
+    print(f"Saving features to: {dstpath}")
     with open(dstpath, "wb") as f:
-        pickle(emb, f)
+        pickle.dump(emb, f)
     
     
 if __name__ == "__main__":
         
-    files_dummy_db_dir = '/mnt/dataset/public/Fingerprinting/neural-audio-fp-dataset/music/test-dummy-db-100k-full/fma_full'
+    #files_dummy_db_dir = '/mnt/dataset/public/Fingerprinting/neural-audio-fp-dataset/music/test-dummy-db-100k-full/fma_full'
+    files_dummy_db_dir = '/mnt/dataset/teste'
     files_query_dir = '/mnt/dataset/public/Fingerprinting/neural-audio-fp-dataset/music/test-query-db-500-30s'
-    root_out = '/mnt/dataset/public/Fingerprinting/features'
+    root_out = '/mnt/dataset/features'
     
     files = glob.glob(os.path.join(files_dummy_db_dir, "**/*.wav")) + glob.glob(os.path.join(files_query_dir, "**/*.wav"))
 
-    parallel=True
+    parallel = False
     model_fp = load_model()
 
     if parallel:
 
         pool = mp.Pool()  #num_proc)
+        print(f"pool:{pool}")
 
         for src in files:
             
@@ -122,10 +130,10 @@ if __name__ == "__main__":
             out_path = os.path.join(root_out, set_id)
             os.makedirs(out_path, exist_ok=True)
 
-            dst = os.path.join(out_path, track+".pkl")
+            dst = os.path.join(out_path, track + ".pkl")
             
             if not os.path.exists(dst):
-                print(dst)
+                #print(dst)
                 pool.apply_async(run, (src, dst, model_fp))
 
         pool.close()
@@ -142,9 +150,9 @@ if __name__ == "__main__":
             out_path = os.path.join(root_out, set_id)
             os.makedirs(out_path, exist_ok=True)
 
-            dst = os.path.join(out_path, track+".pkl")
+            dst = os.path.join(out_path, track + ".pkl")
 
             if not os.path.exists(dst):
-                print(dst)
+                #print(dst)
                 run(src, dst, model_fp)
 
