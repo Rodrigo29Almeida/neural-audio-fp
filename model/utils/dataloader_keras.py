@@ -4,6 +4,8 @@ from tensorflow.keras.utils import Sequence
 from model.utils.audio_utils import (bg_mix_batch, ir_aug_batch, load_audio,
                                      get_fns_seg_list, load_audio_multi_start)
 import numpy as np
+import os
+import csv
 
 MAX_IR_LENGTH = 600#400  # 50ms with fs=8000
 
@@ -133,7 +135,8 @@ class genUnbalSequence(Sequence):
             self.n_samples = int(
                 (len(self.fns_event_seg_list) // n_anchor) * n_anchor)
         else:
-            self.n_samples = len(self.fns_event_seg_list) # fp-generation
+            self.n_samples = len(self.fns_event_seg_list) # fp-generatio
+
 
         if self.shuffle == True:
             self.index_event = np.random.permutation(self.n_samples)

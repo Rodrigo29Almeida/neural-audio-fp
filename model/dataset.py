@@ -6,7 +6,7 @@
 import glob
 from model.utils.dataloader_keras import genUnbalSequence
 import csv
-
+import os
 
 class Dataset:
     """
@@ -266,8 +266,18 @@ class Dataset:
                 # Escrever a linha diretamente no arquivo sem formatação
                     arquivo_csv.write(''.join(linha) + '\n')
             #csv-2
-            csvName2 = 'generate_unseen_icassp_db.csv'
-            with open(csvName2, mode='w', newline='') as arquivo_csv2:
+            diretorio = '/home/rodrigo/Documents/Etiquetas/'
+
+            # Nome do arquivo
+            csvName2 = 'test_query_db.csv'
+
+            # Caminho completo para o arquivo
+            caminho_arquivo = os.path.join(diretorio, csvName2)
+
+            # Escrever os dados no arquivo no diretório especificado
+            with open(caminho_arquivo, mode='w', newline='') as arquivo_csv2:
+            #csvName2 = 'generate_unseen_icassp_db.csv'
+            #with open(csvName2, mode='w', newline='') as arquivo_csv2:
                 for linha2 in self.ts_db_icassp_fps:
                 # Escrever a linha diretamente no arquivo sem formatação
                     arquivo_csv2.write(''.join(linha2) + '\n')

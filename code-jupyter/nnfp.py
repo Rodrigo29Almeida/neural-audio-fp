@@ -147,8 +147,8 @@ class DivEncLayer(tf.keras.layers.Layer):
         """
         out = list()
         for i in range(self.q):
-            out.append(self.split_fc_layers[i](x_slices[:, i, :]))
-        return tf.concat(out, axis=1)
+            out.append(self.split_fc_layers[i](x_slices[:, i, :])) #x_slices = Batch_size x 8, i varia de 0 a 127
+        return tf.concat(out, axis=1) # Batch_size x 128, concat horizontal
 
     
     def call(self, x): # x: (B,1,1,2048)
@@ -248,7 +248,7 @@ def get_fingerprinter(cfg, trainable=False):
     <tf.keras.Model> FingerPrinter object
     
     """
-    input_shape = (256, 32, 1) 
+    input_shape = (256, 32, 1)
     emb_sz = cfg['MODEL']['EMB_SZ']
     norm = cfg['MODEL']['BN']
     fc_unit_dim = [32, 1]
