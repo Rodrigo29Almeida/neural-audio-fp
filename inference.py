@@ -19,7 +19,15 @@ from model.fp.nnfp import get_fingerprinter
 
 from librosa.util import frame
 
+
+
 os.environ['CUDA_VISIBLE_DEVICES'] = '0'
+
+def clean_gpu():
+    from numba import cuda 
+    device = cuda.get_current_device()
+    device.reset()
+clean_gpu()  # Reset GPU
 
 gpus = tf.config.list_physical_devices('GPU')
 if gpus:
@@ -119,10 +127,7 @@ def run(filepath, dstpath, m_fp):
     with open(dstpath, "wb") as f:
         pickle.dump(emb.numpy(), f)
 
-def clean_gpu():
-    from numba import cuda 
-    device = cuda.get_current_device()
-    device.reset()
+
     
 if __name__ == "__main__":
         
@@ -133,7 +138,7 @@ if __name__ == "__main__":
     
     files = glob.glob(os.path.join(files_dummy_db_dir, "**/*.wav")) + glob.glob(os.path.join(files_query_dir, "**/*.wav"))
     
-    clean_gpu()  # Reset GPU
+
 
     parallel = False
     model_fp = load_model()
