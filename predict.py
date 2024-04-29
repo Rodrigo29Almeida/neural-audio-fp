@@ -1,24 +1,16 @@
 import os
-import sys
 import yaml
 
 import tensorflow as tf
-from tensorflow.keras.utils import Progbar
-import tensorflow.keras as K
 import librosa
 import numpy as np
-import glob
 import pickle
-import multiprocessing as mp
+
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '1'
 
-from model.dataset import Dataset
 from model.fp.melspec.melspectrogram import get_melspec_layer
 from model.fp.specaug_chain.specaug_chain import get_specaug_chain_layer
 from model.fp.nnfp import get_fingerprinter
-
-from librosa.util import frame
-
 
 
 os.environ['CUDA_VISIBLE_DEVICES'] = '0'
@@ -96,9 +88,18 @@ def load_model():
     return m_fp
     
 
-def run(filepath, dstpath, m_fp):
-    print(f"file entrada: {filepath}")
-    signal, fs = librosa.load(filepath, mono=True, sr=8000)
+def run(filepath, fs, m_fp):
+    '''
+    filepath: (str, ndarray)
+    '''
+
+    if isinstance(filepath, str):
+        print(f"file entrada: {filepath}")
+        signal, fs = librosa.load(filepath, mono=True, sr=8000)
+    
+    if fs != 8000:
+        signal = librosa.resample(signal, fs, 8000)
+        fs = 8000
 
     win_sz = fs
     hop_sz = int(fs/2)
@@ -123,65 +124,20 @@ def run(filepath, dstpath, m_fp):
 
     tf.config.run_functions_eagerly(True)
 
-    print(f"Saving features to: {dstpath}")
-    with open(dstpath, "wb") as f:
-        pickle.dump(emb.numpy(), f)
-
+    return emb.numpy()
 
     
 if __name__ == "__main__":
         
-    files_dummy_db_dir = '/mnt/dataset/public/Fingerprinting/neural-audio-fp-dataset/music/test-dummy-db-100k-full/fma_full'
-    #files_dummy_db_dir = '/mnt/dataset/test/audio'
-    files_query_dir = '/mnt/dataset/public/Fingerprinting/neural-audio-fp-dataset/music/test-query-db-500-30s'
-    root_out = '/mnt/dataset/public/Fingerprinting/features'
+    file_in = '/mnt/dataset/public/Fingerprinting/neural-audio-fp-dataset/music/test-dummy-db-100k-full/fma_full' + "*.wav"
+    file_out = '/mnt/dataset/public/Fingerprinting/features'
     
-    files = glob.glob(os.path.join(files_dummy_db_dir, "**/*.wav")) + glob.glob(os.path.join(files_query_dir, "**/*.wav"))
-    
-
-
-    parallel = False
     model_fp = load_model()
 
-    if parallel:
+    emb_vector = run(file_in, file_out, model_fp)
 
-        pool = mp.Pool()  #num_proc)
-        print(f"pool:{pool}")
-
-        for src in files:
-            
-            parts = src.split("/")
-            subdir= parts[-3]
-            set_id = parts[-2]
-            track = parts[-1].split(".")[0]
-
-            out_path = os.path.join(root_out, subdir, set_id)
-            os.makedirs(out_path, exist_ok=True)
-
-            dst = os.path.join(out_path, track + ".pkl")
-            
-            if not os.path.exists(dst):
-                #print(dst)
-                pool.apply_async(run, (src, dst, model_fp))
-
-        pool.close()
-        pool.join()
-
-    else:
-        
-        for src in files:
-            parts = src.split("/")
-            subdir= parts[-3]
-            set_id = parts[-2]
-            track = parts[-1].split(".")[0]
-
-            out_path = os.path.join(root_out, subdir, set_id)
-            os.makedirs(out_path, exist_ok=True)
-
-            dst = os.path.join(out_path, track + ".pkl")
-
-            if not os.path.exists(dst):
-                #print(dst)
-                run(src, dst, model_fp)
+    if file_out:
+        with open(file_out, "wb") as f:
+            pickle.dump(emb_vector, f)
 
     clean_gpu()
