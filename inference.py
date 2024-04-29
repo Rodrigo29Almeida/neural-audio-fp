@@ -132,6 +132,8 @@ if __name__ == "__main__":
     root_out = '/mnt/dataset/public/Fingerprinting/features'
     
     files = glob.glob(os.path.join(files_dummy_db_dir, "**/*.wav")) + glob.glob(os.path.join(files_query_dir, "**/*.wav"))
+    
+    clean_gpu()  # Reset GPU
 
     parallel = False
     model_fp = load_model()
