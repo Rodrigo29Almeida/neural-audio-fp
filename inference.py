@@ -118,7 +118,11 @@ def run(filepath, dstpath, m_fp):
     print(f"Saving features to: {dstpath}")
     with open(dstpath, "wb") as f:
         pickle.dump(emb.numpy(), f)
-    
+
+def clean_gpu():
+    from numba import cuda 
+    device = cuda.get_current_device()
+    device.reset()
     
 if __name__ == "__main__":
         
@@ -173,3 +177,4 @@ if __name__ == "__main__":
                 #print(dst)
                 run(src, dst, model_fp)
 
+    clean_gpu()
