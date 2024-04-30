@@ -93,6 +93,7 @@ def run(filepath, fs, m_fp):
     filepath: (str, ndarray)
     '''
 
+    
     if isinstance(filepath, str):
         print(f"file entrada: {filepath}")
         signal, fs = librosa.load(filepath, mono=True, sr=8000)
@@ -100,6 +101,9 @@ def run(filepath, fs, m_fp):
     if fs != 8000:
         signal = librosa.resample(signal, fs, 8000)
         fs = 8000
+
+    
+    fs=8000
 
     win_sz = fs
     hop_sz = int(fs/2)
@@ -112,13 +116,15 @@ def run(filepath, fs, m_fp):
                                             hop_length=hop_sz))  # (B, 8000) # alterei de librosa.frame para librosa.util.frame
     else:
         frames = signal[:fs][None,:] #(1, 8000)
-
-
-    #frames = frames[..., np.newaxis] #(B,8000,1) -- Adicionar mais uma dimensão aos dados 
+    
     
     X = frames[np.newaxis, np.newaxis, ...]  #(1,B,8000,1)  
     X = tf.convert_to_tensor(X, dtype=tf.float32)  # (1,B,8000,1)
     X = tf.transpose(X, perm=[2, 0, 1, 3]) # (B,1,1,8000)
+    
+    # tenho as tramas e de 8000 amostras tenho de chamar a get_melspec, tenho de trazer o get_melspec e o get_fringerprint, tenho trazer uma matriz do input_shape para que consigo ver os pesos
+    # tem de ser m_spec, _, m_fp = build_fp(cfg). matching. tirar o libros,a pegar no sinla, passar no fingerprint. 3 tensores, um para mel spec, um para data_aug e outro para a rede.
+    # (256,32,1) de entrada no X, tenho de alterar em vez de 8000
     
     emb = predict(X, m_fp)
 
@@ -129,12 +135,23 @@ def run(filepath, fs, m_fp):
     
 if __name__ == "__main__":
         
-    file_in = '/mnt/dataset/public/Fingerprinting/neural-audio-fp-dataset/music/test-dummy-db-100k-full/fma_full' + "*.wav"
-    file_out = '/mnt/dataset/public/Fingerprinting/features'
+    #file_in = '/mnt/dataset/public/Fingerprinting/neural-audio-fp-dataset/music/test-dummy-db-100k-full/fma_full' + "*.wav"
+    file_in = '/mnt/dataset/uniqueFile/002000.wav' #'/mnt/dataset/public/Fingerprinting/neural-audio-fp-dataset/music/test-query-db-500-30s/db/000/000134.wav'
+    #file_out = '/mnt/dataset/public/Fingerprinting/features'
+    #file_out = '/mnt/dataset/uniqueFile/'
+
+    signal, sampling_rate = librosa.load(file_in, sr=None)
     
     model_fp = load_model()
 
-    emb_vector = run(file_in, file_out, model_fp)
+    input_shape = (256, 32, 1)
+
+    emb_vector = run(input_shape, sampling_rate, model_fp)
+
+    print(emb_vector)
+    print(emb_vector.shape) #(549,128) - 128, tamanho de cada vetor, 549, num de vetores na musica
+
+    file_out = None
 
     if file_out:
         with open(file_out, "wb") as f:
