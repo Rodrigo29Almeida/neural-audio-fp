@@ -95,7 +95,7 @@ class Melspec_layer(Model):
                             filterbank_kwargs=self.mel_fb_kwargs,
                             data_format='channels_first'
                             )
-            )
+            ) #testar com log, a minha vai ver 84, 32,1... filterbank_log(sample_rate, n_freq, n_bins=84, bins_per_octave=12, f_min=None, spread=0.125) ... basis constroi os filtros
         return m
         
 
