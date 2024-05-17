@@ -1,0 +1,33 @@
+ü¿å¾NÊq¾¤jö½vä¾ØH³¼ìÞÈ¼1–>TÀ}¿Ó¼>ÚX?´q5?¾é7¿d¿sƒÝ>¿¼ž¼…‹¼˜†Y¼P¶¼_Ž?âÇo¾§>D¿»iñ>2"_>óXÌ¼„=?Àþb¿IÖ!¿ãJ>µ˜\?½~Ž<0{L¼ƒf«¼sÖ‹<˜èß¦
+0
+
+dense1
+
+dense2
+
+dense3
+root*
+
+
+kernel
+bias*
+
+
+kernel
+bias*
+
+
+kernel
+	bias*
+WQ
+VARIABLE_VALUEmy_model/dense/kernel(dense1/kernel/.ATTRIBUTES/VARIABLE_VALUE*
+SM
+VARIABLE_VALUEmy_model/dense/bias&dense1/bias/.ATTRIBUTES/VARIABLE_VALUE*
+YS
+VARIABLE_VALUEmy_model/dense_1/kernel(dense2/kernel/.ATTRIBUTES/VARIABLE_VALUE*
+UO
+VARIABLE_VALUEmy_model/dense_1/bias&dense2/bias/.ATTRIBUTES/VARIABLE_VALUE*
+YS
+VARIABLE_VALUEmy_model/dense_2/kernel(dense3/kernel/.ATTRIBUTES/VARIABLE_VALUE*
+UO
+VARIABLE_VALUEmy_model/dense_2/bias&dense3/bias/.ATTRIBUTES/VARIABLE_VALUE*
