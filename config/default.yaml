@@ -39,11 +39,11 @@ MODEL:
     FS : 8000 # Sampling rate
     DUR : 1. # Unit segment length in seconds.
     HOP : .5 # Hop-size of the segment window in seconds.
-    STFT_WIN : 1024
-    STFT_HOP : 256
-    F_MIN : 300. # Frequency range.
+    STFT_WIN : 2048
+    STFT_HOP : 192
+    F_MIN : None # Frequency range.
     F_MAX : 4000. # Frequency range.
-    N_MELS : 256 # Number of mel-frequency bins.
+    N_MELS : None # Number of mel-frequency bins.
     EMB_SZ : 128  # Dimension of fingerprint, d in this paper.
     BN : 'layer_norm2d' # or 'batch_norm'
     # NOTE:

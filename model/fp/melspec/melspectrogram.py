@@ -6,6 +6,9 @@ from tensorflow.keras.layers import Lambda, Permute
 from kapre.time_frequency import STFT, Magnitude, ApplyFilterbank
 import math
 
+import numpy as np
+import csv
+
 
 class Melspec_layer(Model):
     """
@@ -100,15 +103,21 @@ class Melspec_layer(Model):
         
 
     @tf.function
-    def call(self, x):        
+    def call(self, x):
+        tf.print(f"antes do m:{x.shape, type(x), x}")
         x = self.m(x) + 0.06
-        #x = tf.sqrt(x)
+        #tf.print(f"depois do m:{x.shape, type(x), x}")
         
         x = tf.math.log(tf.maximum(x, self.amin)) / math.log(10)
+        #tf.print(f"x_tf.math:{x.shape, type(x), x}")
         x = x - tf.reduce_max(x)
+        #tf.print(f"x_reduce:{x.shape, type(x), x}")
         x = tf.maximum(x, -1 * self.dynamic_range)
+        #tf.print(f"x_maximum:{x.shape, type(x), x}")        
         if self.segment_norm:
             x = (x - tf.reduce_min(x) / 2) / tf.abs(tf.reduce_min(x) / 2 + 1e-10)
+
+        tf.print(f"p:{self.p(x).shape, type(self.p(x)), self.p(x)}")     
         return self.p(x) # Permute((3,2,1))
 
     
