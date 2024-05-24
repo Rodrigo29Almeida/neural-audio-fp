@@ -5,6 +5,7 @@
 logs/
 **/dev/
 
+ModeloGuardadoFolder/
 *.csv
 
 .DS_Store
