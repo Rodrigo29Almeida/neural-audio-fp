@@ -104,7 +104,7 @@ class Melspec_layer(Model):
 
     @tf.function
     def call(self, x):
-        tf.print(f"antes do m:{x.shape, type(x), x}")
+        #tf.print(f"antes do m:{x.shape, type(x), x}")
         x = self.m(x) + 0.06
         #tf.print(f"depois do m:{x.shape, type(x), x}")
         
@@ -117,7 +117,7 @@ class Melspec_layer(Model):
         if self.segment_norm:
             x = (x - tf.reduce_min(x) / 2) / tf.abs(tf.reduce_min(x) / 2 + 1e-10)
 
-        tf.print(f"p:{self.p(x).shape, type(self.p(x)), self.p(x)}")     
+        #tf.print(f"p:{self.p(x).shape, type(self.p(x)), self.p(x)}")     
         return self.p(x) # Permute((3,2,1))
 
     
