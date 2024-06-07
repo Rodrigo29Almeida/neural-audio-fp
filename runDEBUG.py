@@ -52,7 +52,7 @@ def train(checkpoint_name, config, max_epoch):
     cfg = load_config(config)
     if max_epoch: update_config(cfg, 'TRAIN', 'MAX_EPOCH', max_epoch)
     print_config(cfg)
-    allow_gpu_memory_growth()
+    #allow_gpu_memory_growth()
     trainer(cfg, checkpoint_name)
 
 

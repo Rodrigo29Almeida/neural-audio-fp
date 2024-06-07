@@ -154,8 +154,11 @@ def get_fns_seg_list(fns_list=[],
     if hop == None: hop = duration
     fns_event_seg_list = []
 
+    #print(f"fns_list={fns_list}")
+
     for offset_idx, filename in enumerate(fns_list):
         # Get audio info
+        #print(f"filename={filename}")
         n_frames_in_seg = fs * duration
         n_frames_in_hop = fs * hop  # 2019 09.05
         file_ext = filename[-3:]

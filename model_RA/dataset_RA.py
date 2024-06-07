@@ -4,7 +4,7 @@
 # LICENSE file in the root directory of this source tree.
 """ dataset.py """
 import glob
-from model.utils.dataloader_keras import genUnbalSequence
+from model_RA.utils.dataloader_keras import genUnbalSequence
 import csv
 import os
 
@@ -163,7 +163,8 @@ class Dataset:
         self.val_source_fps = sorted(
             glob.glob(self.source_root_dir + 'val-query-db-500-30s/' +
                       '**/*.wav', recursive=True))[:max_song]
-
+        
+        
         ds = genUnbalSequence(
             self.val_source_fps,
             self.val_batch_sz,
@@ -177,6 +178,15 @@ class Dataset:
             ir_mix_parameter=[self.val_use_ir_aug, self.val_ir_fps],
             speech_mix_parameter=[self.val_use_speech_aug, self.val_speech_fps,
                                   self.val_snr])
+        
+        #csv-Rodrigo
+        csvName = 'CSVs/generateCSV.csv'
+        with open(csvName, mode='w', newline='') as arquivo_csv:
+            escritor_csv = csv.writer(arquivo_csv)
+            for linha in ds:
+                escritor_csv.writerow(linha)
+        #csv
+
         return ds
 
 
@@ -224,7 +234,7 @@ class Dataset:
             drop_the_last_non_full_batch=False) # No augmentations...
         
         """#csv-Rodrigo
-        csvName = 'generateCSV.csv'
+        csvName = 'CSVs/generateCSV.csv'
         with open(csvName, mode='w', newline='') as arquivo_csv:
             escritor_csv = csv.writer(arquivo_csv)
             for linha in ds:

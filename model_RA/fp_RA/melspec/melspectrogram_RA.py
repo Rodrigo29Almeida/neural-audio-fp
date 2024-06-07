@@ -215,6 +215,7 @@ class Melspec_layer(Model):
         #x = tf.sqrt(x)
         
         x = tf.math.log(tf.maximum(x, self.amin)) / math.log(10) # ver se usa o 20 aqui, com 20 ficava em db, sem 20 não
+        #x = 10*(tf.math.log(tf.maximum(x, self.amin)) / math.log(10)) # ver se usa o 20 aqui, com 20 ficava em db, sem 20 não
         x = x - tf.reduce_max(x)
         x = tf.maximum(x, -1 * self.dynamic_range) #ver os dados do x aqui
         if self.segment_norm:

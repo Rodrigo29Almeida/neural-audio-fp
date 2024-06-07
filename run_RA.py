@@ -104,8 +104,8 @@ def generate(checkpoint_name, checkpoint_index, config, source, output, skip_dum
     • The default value for the fingerprinting source is [TEST_DUMMY_DB] and [TEST_QUERY_DB] specified in config file.
 
     """
-    from model.utils.config_gpu_memory_lim import allow_gpu_memory_growth
-    from model.generate import generate_fingerprint
+    from model_RA.utils.config_gpu_memory_lim import allow_gpu_memory_growth
+    from model_RA.generate_RA import generate_fingerprint
 
     cfg = load_config(config)
     allow_gpu_memory_growth()

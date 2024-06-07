@@ -8,9 +8,9 @@ import sys
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras.utils import Progbar
-from model.dataset import Dataset
-from model.fp.melspec.melspectrogram import get_melspec_layer
-from model.fp.nnfp import get_fingerprinter
+from model_RA.dataset_RA import Dataset
+from model_RA.fp_RA.melspec.melspectrogram_RA import get_melspec_layer
+from model_RA.fp_RA.nnfp import get_fingerprinter
 
 
 def build_fp(cfg):

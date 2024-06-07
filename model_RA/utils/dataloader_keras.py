@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """ dataloader_keras.py """
 from tensorflow.keras.utils import Sequence
-from model.utils.audio_utils import (bg_mix_batch, ir_aug_batch, load_audio,
+from model_RA.utils.audio_utils import (bg_mix_batch, ir_aug_batch, load_audio,
                                      get_fns_seg_list, load_audio_multi_start)
 import numpy as np
 import os
@@ -116,6 +116,7 @@ class genUnbalSequence(Sequence):
 
         
         if self.seg_mode in {'random_oneshot', 'all'}:
+            print(fns_event_list)
             self.fns_event_seg_list = get_fns_seg_list(fns_event_list,
                                                        self.seg_mode,
                                                        self.fs,
@@ -142,6 +143,7 @@ class genUnbalSequence(Sequence):
             self.index_event = np.random.permutation(self.n_samples)
         else:
             self.index_event = np.arange(self.n_samples)
+            #print(f"self.n_samples, self.index_event: {self.n_samples, self.index_event}")
 
         if self.bg_mix == True:
             self.fns_bg_seg_list = get_fns_seg_list(fns_bg_list, 'all',
