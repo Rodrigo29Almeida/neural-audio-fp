@@ -51,6 +51,13 @@ class Melspec_layer(Model):
             'f_min': f_min,
             'f_max': f_max,
             }
+        self.log_fb_kwargs = {
+            'sample_rate': fs,
+            'n_freq': n_fft // 2 + 1,
+            'n_bins': 84,
+            'bins_per_octave': 12,
+            'f_min': None,
+            }
         self.n_fft = n_fft
         self.stft_hop = stft_hop
         self.n_mels = n_mels
@@ -95,7 +102,7 @@ class Melspec_layer(Model):
             )
         m.add(
             ApplyFilterbank(type='mel',
-                            filterbank_kwargs=self.mel_fb_kwargs,
+                            filterbank_kwargs=self.log_fb_kwargs,
                             data_format='channels_first'
                             )
             )

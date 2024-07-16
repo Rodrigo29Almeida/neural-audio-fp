@@ -1,6 +1,6 @@
 # Dataset directories
 DIR:
-    SOURCE_ROOT_DIR : '/mnt/dataset/public/Fingerprinting/neural-audio-fp-dataset/music/'
+    SOURCE_ROOT_DIR : '/mnt/dataset/public/Fingerprinting/neural-audio-fp-dataset/music/' #'/mnt/dataset/public/Fingerprinting/neural-audio-fp-dataset/music/train-10k-30s/fma_small_8k_plus_medium_2k/000/000625' #000002.wav'
     BG_ROOT_DIR : '/mnt/dataset/public/Fingerprinting/neural-audio-fp-dataset/aug/bg/'
     IR_ROOT_DIR : '/mnt/dataset/public/Fingerprinting/neural-audio-fp-dataset/aug/ir/'
     SPEECH_ROOT_DIR : '/mnt/dataset/public/Fingerprinting/neural-audio-fp-dataset/aug/speech/common_voice_8k/en/'

@@ -150,7 +150,7 @@ def evaluate(checkpoint_name, checkpoint_index, config, index_type,
     • Currently, the 'evaluate' command does not reference any information other
     than the output log directory from the config file.
     """
-    from eval.eval_faiss import eval_faiss
+    from eval_RA.eval_faiss import eval_faiss
 
     cfg = load_config(config)
     emb_dir = cfg['DIR']['OUTPUT_ROOT_DIR'] + checkpoint_name + '/' + \

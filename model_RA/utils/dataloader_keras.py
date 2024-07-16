@@ -113,15 +113,17 @@ class genUnbalSequence(Sequence):
         if self.speech_mix == True:
             fns_speech_list = speech_mix_parameter[1]
             self.speech_snr_range = speech_mix_parameter[2]
-
         
         if self.seg_mode in {'random_oneshot', 'all'}:
-            print(fns_event_list)
+            #print(f"fns_event_list:{fns_event_list}")
             self.fns_event_seg_list = get_fns_seg_list(fns_event_list,
                                                        self.seg_mode,
                                                        self.fs,
                                                        self.duration,
                                                        hop=self.hop)
+            #print(f"fns_event_seg_list:{self.fns_event_seg_list}")
+            #self.fns_event_seg_list = [self.fns_event_seg_list[20]] # linha de código para o spectogram - tese
+            #print(f"fns_event_seg_list:{self.fns_event_seg_list}")
         else:
             raise NotImplementedError("seg_mode={}".format(self.seg_mode))
         """Structure of fns_event_seg_list:
@@ -131,12 +133,16 @@ class genUnbalSequence(Sequence):
         """
         
         self.drop_the_last_non_full_batch = drop_the_last_non_full_batch
+        #print(f"self.drop_the_last_non_full_batch: {self.drop_the_last_non_full_batch}")
         
         if self.drop_the_last_non_full_batch: # training
+            #print(f"valor:{ (len(self.fns_event_seg_list) // n_anchor)}")
             self.n_samples = int(
                 (len(self.fns_event_seg_list) // n_anchor) * n_anchor)
+            #print(f"self.n_samples: {self.n_samples}")
         else:
-            self.n_samples = len(self.fns_event_seg_list) # fp-generatio
+            self.n_samples = len(self.fns_event_seg_list) # fp-generation
+            #print(f"self.n_samples: {self.n_samples}")
 
 
         if self.shuffle == True:
@@ -485,3 +491,4 @@ class genUnbalSequence(Sequence):
                 X_ir_batch = np.concatenate((X_ir_batch, X), axis=0)
 
         return X_ir_batch
+    

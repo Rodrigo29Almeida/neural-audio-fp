@@ -34,6 +34,7 @@ class CustomApplyFilterbank(ApplyFilterbank):
             self.freq_axis = 2
 
     def filterbank_triangular_log(self, sample_rate, n_fft):
+        #este texo abaixo está
         # Com o objetivo de ter 256 filtros e 8000 Hz na frequência de amostragem, teve-se de optar por Nfft de 2048, o que resulta em 54.4024 filtros por oitava, e numa frequência mínima de 151.3483 Hz.
 
         # Sendo assim, o Nfpo será 60, 5*12, e a frequência do último filtro, f256, será Si7 = 3951.066410048992 Hz. Resultando numa frequência máxima de 3996.975590329487 Hz.

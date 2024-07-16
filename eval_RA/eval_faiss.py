@@ -5,6 +5,7 @@
 """ eval_faiss.py """
 import os
 import sys
+import csv
 import time
 import glob
 import click
@@ -96,7 +97,7 @@ def eval_faiss(emb_dir,
                nogpu=False,
                max_train=1e7,
                test_ids='icassp',
-               test_seq_len='1 3 5 9 11 19',
+               test_seq_len='1 3',#test_seq_len='1 3 5 9 11 19',
                k_probe=20,
                display_interval=5):
     """
@@ -118,6 +119,15 @@ def eval_faiss(emb_dir,
     if emb_dummy_dir is None:
         emb_dummy_dir = emb_dir
     dummy_db, dummy_db_shape = load_memmap_data(emb_dummy_dir, 'dummy_db')
+
+
+    #DEBUG:
+    #dummy_db = dummy_db[:10000,:]
+    #dummy_db_shape = np.array(dummy_db.shape)
+    #db = db[:500,:]
+    #db_shape= np.array(db.shape)
+    #query= query[:500,:]
+    #query_shape= np.array(query.shape)
     """ ----------------------------------------------------------------------
     FAISS index setup
 
@@ -167,6 +177,9 @@ def eval_faiss(emb_dir,
     fake_recon_index, index_shape = load_memmap_data(
         emb_dummy_dir, 'dummy_db', append_extra_length=query_shape[0],
         display=False)
+    #DEBUG:
+    #fake_recon_index = fake_recon_index[:10500,:]
+    #index_shape = fake_recon_index.shape
     fake_recon_index[dummy_db_shape[0]:dummy_db_shape[0] + query_shape[0], :] = db[:, :]
     fake_recon_index.flush()
 
@@ -185,6 +198,7 @@ def eval_faiss(emb_dir,
     else:
         test_ids = np.load(test_ids)
 
+    #test_ids = [24, 121, 487, 112, 483]
     n_test = len(test_ids)
     gt_ids  = test_ids + dummy_db_shape[0]
     print(f'n_test: \033[93m{n_test:n}\033[0m')
@@ -197,9 +211,10 @@ def eval_faiss(emb_dir,
     top10_exact = np.zeros((n_test, len(test_seq_len))).astype(int)
     # top1_song = np.zeros((n_test, len(test_seq_len))).astype(np.int)
 
+    #results = []
     scr = curses.initscr()
-    pt = PrintTable(scr=scr, test_seq_len=test_seq_len,
-                    row_names=['Top1 exact', 'Top1 near', 'Top3 exact','Top10 exact'])
+    #pt = PrintTable(scr=scr, test_seq_len=test_seq_len,
+    #                row_names=['Top1 exact', 'Top1 near', 'Top3 exact','Top10 exact'])
     start_time = time.time()
     for ti, test_id in enumerate(test_ids):
         gt_id = gt_ids[ti]
@@ -210,13 +225,18 @@ def eval_faiss(emb_dir,
             # segment-level top k search for each segment
             _, I = index.search(
                 q, k_probe) # _: distance, I: result IDs matrix
+            
+            #print(f"ti-{ti}-test_id-{test_id}-si-{si}-sl-{sl}-I-{I}")
 
             # offset compensation to get the start IDs of candidate sequences
             for offset in range(len(I)):
                 I[offset, :] -= offset
+            
+            #print(f"I_offset-{I}")
 
             # unique candidates
             candidates = np.unique(I[np.where(I >= 0)])   # ignore id < 0
+            #print(f"candidates-{candidates}")
 
             """ Sequence match score """
             _scores = np.zeros(len(candidates))
@@ -242,6 +262,18 @@ def eval_faiss(emb_dir,
             top3_exact[ti, si] = int(gt_id in pred_ids[:3])
             top10_exact[ti, si] = int(gt_id in pred_ids[:10])
 
+            """results.append({
+                'test_id': test_id,
+                'gt_id': gt_id,
+                'seq_len': sl,
+                'I': I,
+                'candidates': candidates,
+                'top1_exact': top1_exact[ti, si],
+                'top1_near': top1_near[ti, si],
+                'top3_exact': top3_exact[ti, si],
+                'top10_exact': top10_exact[ti, si]
+                })"""
+
 
         if (ti != 0) & ((ti % display_interval) == 0):
             avg_search_time = (time.time() - start_time) / display_interval \
@@ -252,11 +284,21 @@ def eval_faiss(emb_dir,
             top10_exact_rate = 100. * np.mean(top10_exact[:ti + 1, :], axis=0)
             # top1_song = 100 * np.mean(tp_song[:ti + 1, :], axis=0)
 
-            pt.update_counter(ti, n_test, avg_search_time * 1000.)
-            pt.update_table((top1_exact_rate, top1_near_rate, top3_exact_rate,
-                             top10_exact_rate))
+            #pt.update_counter(ti, n_test, avg_search_time * 1000.)
+            #pt.update_table((top1_exact_rate, top1_near_rate, top3_exact_rate,
+            #                 top10_exact_rate))
             start_time = time.time() # reset stopwatch
 
+    """# Escrever resultados no arquivo CSV
+    csv_file_path = 'results.csv'
+    with open(csv_file_path, mode='w', newline='') as file:
+        writer = csv.DictWriter(file, fieldnames=[
+            'test_id', 'gt_id', 'seq_len', 'I', 'candidates','top1_exact', 'top1_near', 'top3_exact', 'top10_exact'
+        ])
+        writer.writeheader()
+        writer.writerows(results)"""
+
+    
     # Summary
     top1_exact_rate = 100. * np.mean(top1_exact, axis=0)
     top1_near_rate = 100. * np.mean(top1_near, axis=0)
@@ -264,9 +306,9 @@ def eval_faiss(emb_dir,
     top10_exact_rate = 100. * np.mean(top10_exact, axis=0)
     # top1_song = 100 * np.mean(top1_song[:ti + 1, :], axis=0)
 
-    pt.update_counter(ti, n_test, avg_search_time * 1000.)
-    pt.update_table((top1_exact_rate, top1_near_rate, top3_exact_rate, top10_exact_rate))
-    pt.close_table() # close table and print summary
+    #pt.update_counter(ti, n_test, avg_search_time * 1000.)
+    #pt.update_table((top1_exact_rate, top1_near_rate, top3_exact_rate, top10_exact_rate))
+    #pt.close_table() # close table and print summary
     del fake_recon_index, query, db
     np.save(f'{emb_dir}/raw_score.npy',
             np.concatenate(

@@ -78,7 +78,7 @@ class Dataset:
         self.__set_augmentation_fps()
 
         # Source (music) file paths
-        self.tr_source_fps = self.val_source_fps = None
+        self.tr_source_fps = self.val_source_fps = '/mnt/dataset/public/Fingerprinting/neural-audio-fp-dataset/music/train-10k-30s/fma_small_8k_plus_medium_2k/000/000002.wav'
         self.ts_dummy_db_source_fps = None
         self.ts_query_icassp_fps = self.ts_db_icassp_fps = None
         self.ts_query_db_unseen_fps = None
@@ -133,10 +133,17 @@ class Dataset:
             _prefix = 'train-10k-30s/'
         else:
             raise NotImplementedError(self.datasel_train)
-        self.tr_source_fps = sorted(
-            glob.glob(self.source_root_dir + _prefix + '**/*.wav',
-                      recursive=True))
+        """self.tr_source_fps = sorted(
+            glob.glob(self.source_root_dir + _prefix + '/*.wav',
+                      recursive=True))"""
+        
+        """self.tr_source_fps = sorted(
+            glob.glob(self.source_root_dir + '.wav',
+                      recursive=True))"""
+        
+        print(f"self.tr_source_fps:{self.tr_source_fps}")
 
+        """
         ds = genUnbalSequence(
             fns_event_list=self.tr_source_fps,
             bsz=self.tr_batch_sz,
@@ -150,7 +157,22 @@ class Dataset:
             ir_mix_parameter=[self.tr_use_ir_aug, self.tr_ir_fps],
             speech_mix_parameter=[self.tr_use_speech_aug, self.tr_speech_fps,
                                   self.tr_snr],
-            reduce_items_p=reduce_items_p)
+            reduce_items_p=reduce_items_p)"""
+        ds = genUnbalSequence(
+            fns_event_list=self.tr_source_fps,
+            bsz=self.tr_batch_sz,
+            n_anchor=self.tr_n_anchor, #ex) bsz=40, n_anchor=8: 4 positive samples per anchor
+            duration=self.dur,  # duration in seconds
+            hop=self.hop,
+            fs=self.fs,
+            shuffle=True,
+            random_offset_anchor=True,
+            bg_mix_parameter=[self.tr_use_bg_aug, self.tr_bg_fps, self.tr_snr],
+            ir_mix_parameter=[self.tr_use_ir_aug, self.tr_ir_fps],
+            speech_mix_parameter=[self.tr_use_speech_aug, self.tr_speech_fps,
+                                  self.tr_snr],
+            reduce_items_p=reduce_items_p, 
+            drop_the_last_non_full_batch = False)
         return ds
 
 
@@ -180,12 +202,14 @@ class Dataset:
                                   self.val_snr])
         
         #csv-Rodrigo
+        """
         csvName = 'CSVs/generateCSV.csv'
         with open(csvName, mode='w', newline='') as arquivo_csv:
             escritor_csv = csv.writer(arquivo_csv)
             for linha in ds:
                 escritor_csv.writerow(linha)
         #csv
+        """
 
         return ds
 
@@ -196,7 +220,6 @@ class Dataset:
 
             In this case, high-speed fingerprinting is possible without
             augmentation by setting ts_n_anchor=ts_batch_sz.
-
         """
         # Source (music) file paths for test-dummy-DB set
         self.ts_dummy_db_source_fps = sorted(
